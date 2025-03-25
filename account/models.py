@@ -1,14 +1,15 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin 
+
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, first_name, last_name, email, phone_number, password=None, role=None):
+    def create_user(self, username, first_name, last_name, email, phone_number, password=None, role=2):
         if not email:
             raise ValueError("User must have an email")
         if not username:
             raise ValueError("User must have a username")
         
-        user = self.model(
+        user = self.model.objects.create(
             email=self.normalize_email(email),
             username=username,
             first_name=first_name,
@@ -29,7 +30,7 @@ class UserManager(BaseUserManager):
             last_name=last_name,
             phone_number=phone_number,
             password=password,
-            role=User.RESTAURANT  
+            role=self.model.RESTAURANT  
         )
         
         user.is_admin = True
@@ -39,7 +40,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     RESTAURANT = 1
     CUSTOMER = 2
     
@@ -54,7 +55,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=15, unique=True)  
 
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICE, blank=True, null=True)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICE, default=CUSTOMER, blank=True, null=True)
 
     date_joined = models.DateTimeField(auto_now_add=True)  
     last_login = models.DateTimeField(auto_now=True) 
@@ -63,7 +64,7 @@ class User(AbstractBaseUser):
 
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)  # Users should be active by default
     is_superuser = models.BooleanField(default=False)  
 
     USERNAME_FIELD = 'email'
@@ -79,3 +80,23 @@ class User(AbstractBaseUser):
     
     def has_module_perms(self, app_label):  
         return True
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='users/profile_picture', blank=True, null=True)
+    cover_photo = models.ImageField(upload_to='users/cover_photo', blank=True, null=True)
+    address_1 = models.CharField(max_length=50, blank=True, null=True)
+    address_2 = models.CharField(max_length=50, blank=True, null=True)
+    country = models.CharField(max_length=50, blank=True, null=True)
+    state = models.CharField(max_length=50, blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+    pincode = models.CharField(max_length=6, blank=True, null=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.email if self.user else "Anonymous User"
+    
