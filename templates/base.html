@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FoodOnline</title>
+
+    <!-- Google Font Family -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800" rel="stylesheet">
+
+    <!-- CSS -->
+    <link href="{% static 'css/iconmoon.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/cs-foodbakery-plugin.css' %}" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-slider.css' %}" rel="stylesheet">
+
+    <!-- JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'js/modernizr.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>    
+
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+
+    <style>
+        body, .main-section p, .mce-content-body p {
+            font: normal 14px/24px "Open Sans", sans-serif;
+            letter-spacing: 0px;
+            text-transform: none;
+            color: #515151 !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    {% include "includes/navbar.html" %}
+
+    <!-- Main Section Start -->
+    {% block content %}
+    
+    {% endblock content %}
+    <!-- Main Section End -->
+
+    <!-- Footer -->
+    {% include "includes/footer.html" %}
+
+</body>
+</html>
